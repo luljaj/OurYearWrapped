@@ -25,6 +25,7 @@ function preload(src) {
 }
 
 export default function App() {
+  const isDev = import.meta.env.DEV
   const [unlocked, setUnlocked] = useState(() => {
     try {
       return localStorage.getItem('oyw_unlocked') === '1'
@@ -32,16 +33,18 @@ export default function App() {
       return false
     }
   })
+  const [debug, setDebug] = useState(false)
   const deck = unlocked ? wrappedSlides : onboardingSlides
   const Wrapper = unlocked ? Slide : OnboardingSlide
-  const allowManualNavigation = unlocked || debug
+  const allowManualNavigation = unlocked || (isDev && debug)
+  const allowBack = allowManualNavigation
   const total = deck.length
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(1) // 1 forward, -1 backward
-  const [debug, setDebug] = useState(false)
-  const [audioEnabled, setAudioEnabled] = useState(false)
+  const [audioEnabled, setAudioEnabled] = useState(true)
   const [audioError, setAudioError] = useState(false)
   const [audioPaused, setAudioPaused] = useState(true)
+  const [audioNeedsUnmute, setAudioNeedsUnmute] = useState(false)
 
   const pointer = useRef({ active: false, x0: 0, y0: 0 })
   const spaceDown = useRef(false)
@@ -151,12 +154,50 @@ export default function App() {
       audio.src = nextSrc
     }
 
-    // Try to play (may be blocked until user gesture; we keep UI for retry).
-    Promise.resolve(audio.play()).catch(() => {
-      // Autoplay policy or load errors will keep us paused until user taps Play.
-      setAudioPaused(true)
-    })
+    // Try to play with audio. If autoplay is blocked, fall back to muted autoplay
+    // so the track is "running" immediately, then let the user unmute on first gesture.
+    audio.muted = false
+    Promise.resolve(audio.play())
+      .then(() => {
+        setAudioNeedsUnmute(false)
+      })
+      .catch(() => {
+        audio.muted = true
+        Promise.resolve(audio.play())
+          .then(() => {
+            setAudioNeedsUnmute(true)
+          })
+          .catch(() => {
+            // Autoplay policy or load errors will keep us paused until user taps Play.
+            setAudioPaused(true)
+            setAudioNeedsUnmute(false)
+          })
+      })
   }, [activeTrack, audioEnabled])
+
+  useEffect(() => {
+    // One-time attempt to unmute+play on first user gesture (works around autoplay policy).
+    const audio = audioRef.current
+    if (!audioEnabled || !audio || !audioNeedsUnmute) return
+
+    const tryUnmute = () => {
+      audio.muted = false
+      Promise.resolve(audio.play())
+        .then(() => setAudioNeedsUnmute(false))
+        .catch(() => {
+          // still blocked; keep muted
+          audio.muted = true
+        })
+    }
+
+    const onFirstGesture = () => tryUnmute()
+    window.addEventListener('pointerdown', onFirstGesture, { once: true })
+    window.addEventListener('keydown', onFirstGesture, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', onFirstGesture)
+      window.removeEventListener('keydown', onFirstGesture)
+    }
+  }, [audioEnabled, audioNeedsUnmute])
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -177,20 +218,20 @@ export default function App() {
         e.preventDefault()
       }
 
-      if (!allowManualNavigation) {
-        if (e.key.toLowerCase() === 'd') setDebug((v) => !v)
-        return
-      }
-
       if (key === 'ArrowRight') {
+        if (!allowManualNavigation) return
+        if (e.repeat) return
         nextSlide()
         return
       }
       if (key === 'ArrowLeft') {
+        if (!allowBack) return
+        if (e.repeat) return
         prevSlide()
         return
       }
       if (key === 'Escape') {
+        if (!allowBack) return
         goToStart()
         return
       }
@@ -199,6 +240,7 @@ export default function App() {
         return
       }
       if (code === 'Space') {
+        if (!allowManualNavigation) return
         if (e.repeat) return
         spaceDown.current = true
       }
@@ -228,7 +270,7 @@ export default function App() {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
     }
-  }, [allowManualNavigation, goToStart, nextSlide, prevSlide])
+  }, [allowBack, allowManualNavigation, goToStart, nextSlide, prevSlide])
 
   const onPointerDown = (e) => {
     if (!allowManualNavigation) return
@@ -270,6 +312,7 @@ export default function App() {
           key={active.key}
           direction={direction}
           gradientClass={active.gradientClass}
+          heartsMode={active.heartsMode}
           index={currentSlide}
           total={total}
           debug={debug}
@@ -284,8 +327,15 @@ export default function App() {
         hasTrack={Boolean(activeTrack)}
         error={audioError}
         paused={audioPaused}
+        needsUnmute={audioNeedsUnmute && audioEnabled && Boolean(activeTrack)}
         trackTitle={activeTrack?.title || null}
-        onToggleEnabled={() => setAudioEnabled((v) => !v)}
+        onToggleEnabled={() => {
+          setAudioEnabled((v) => {
+            const next = !v
+            if (!next) setAudioNeedsUnmute(false)
+            return next
+          })
+        }}
         onTogglePause={() => {
           const audio = audioRef.current
           if (!audio) return
@@ -296,6 +346,17 @@ export default function App() {
           } else {
             audio.pause()
           }
+        }}
+        onUnmute={() => {
+          const audio = audioRef.current
+          if (!audio) return
+          audio.muted = false
+          Promise.resolve(audio.play())
+            .then(() => setAudioNeedsUnmute(false))
+            .catch(() => {
+              // blocked; keep state so user can retry
+              setAudioNeedsUnmute(true)
+            })
         }}
       />
 

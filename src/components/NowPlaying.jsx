@@ -10,6 +10,8 @@ export default function NowPlaying({
   onToggleEnabled,
   onTogglePause,
   paused,
+  needsUnmute,
+  onUnmute,
 }) {
   const label = trackTitle || 'No track'
   const sub =
@@ -19,6 +21,8 @@ export default function NowPlaying({
         ? 'No song for this slide'
         : error
           ? 'Audio file missing/invalid'
+          : needsUnmute
+            ? 'Tap to unmute'
           : paused
             ? 'Paused'
             : 'Playing'
@@ -48,15 +52,27 @@ export default function NowPlaying({
         </div>
 
         {enabled ? (
-          <button
-            type="button"
-            onClick={onTogglePause}
-            className="rounded-full bg-white/45 px-3 py-2 text-xs font-bold text-[#2a0e1c] hover:bg-white/70 focus:outline-none focus:ring-2 focus:ring-deep-pink/40"
-            aria-label={paused ? 'Play' : 'Pause'}
-            title={paused ? 'Play' : 'Pause'}
-          >
-            {paused ? 'Play' : 'Pause'}
-          </button>
+          needsUnmute ? (
+            <button
+              type="button"
+              onClick={onUnmute}
+              className="rounded-full bg-deep-pink px-3 py-2 text-xs font-bold text-white shadow-glow hover:bg-dark-pink focus:outline-none focus:ring-2 focus:ring-deep-pink/40"
+              aria-label="Unmute"
+              title="Unmute"
+            >
+              Unmute
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onTogglePause}
+              className="rounded-full bg-white/45 px-3 py-2 text-xs font-bold text-[#2a0e1c] hover:bg-white/70 focus:outline-none focus:ring-2 focus:ring-deep-pink/40"
+              aria-label={paused ? 'Play' : 'Pause'}
+              title={paused ? 'Play' : 'Pause'}
+            >
+              {paused ? 'Play' : 'Pause'}
+            </button>
+          )
         ) : null}
       </MotionDiv>
     </div>

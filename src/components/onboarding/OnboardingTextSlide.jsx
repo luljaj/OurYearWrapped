@@ -4,7 +4,6 @@ const MotionDiv = motion.div
 
 export default function OnboardingTextSlide({
   text,
-  onNext,
   size = 'lg', // sm | md | lg
 }) {
   const sizeClass =
@@ -15,12 +14,7 @@ export default function OnboardingTextSlide({
         : 'text-5xl md:text-6xl'
 
   return (
-    <button
-      type="button"
-      onClick={() => onNext?.()}
-      className="mx-auto block w-full max-w-[920px] text-center focus:outline-none focus:ring-2 focus:ring-deep-pink/30 rounded-3xl"
-      aria-label="Next"
-    >
+    <div className="mx-auto w-full max-w-[920px] text-center">
       <MotionDiv
         initial={{ opacity: 0, y: 16, scale: 0.99 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -31,11 +25,7 @@ export default function OnboardingTextSlide({
         >
           {text}
         </div>
-
-        <div className="mt-10 font-body text-xs font-semibold text-[#2a0e1c]/45">
-          Tap to continue
-        </div>
       </MotionDiv>
-    </button>
+    </div>
   )
 }

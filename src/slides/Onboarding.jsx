@@ -13,11 +13,9 @@ export const onboardingSlides = [
     key: 'onboard-01',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
+    Component: () => (
       <OnboardingTextSlide
         text={'Hello, my beautiful girl.'}
-        onNext={onNext}
-        autoAdvanceMs={2800}
       />
     ),
   },
@@ -25,11 +23,9 @@ export const onboardingSlides = [
     key: 'onboard-02',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
+    Component: () => (
       <OnboardingTextSlide
         text={`I'm sorry I'm so late to the party, I'm looking up at my whiteboard and your wrote "clocks ticking"`}
-        onNext={onNext}
-        autoAdvanceMs={5200}
         size="md"
       />
     ),
@@ -38,11 +34,9 @@ export const onboardingSlides = [
     key: 'onboard-03',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
+    Component: () => (
       <OnboardingTextSlide
         text={'I just wanted to give you a magical birthday, so I took extra time to prepare this for you.'}
-        onNext={onNext}
-        autoAdvanceMs={5200}
         size="md"
       />
     ),
@@ -51,11 +45,9 @@ export const onboardingSlides = [
     key: 'onboard-04',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
+    Component: () => (
       <OnboardingTextSlide
         text={'I had to prepare this for you, because, honestly, I have something to tell you'}
-        onNext={onNext}
-        autoAdvanceMs={4800}
         size="md"
       />
     ),
@@ -64,11 +56,9 @@ export const onboardingSlides = [
     key: 'onboard-05',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
+    Component: () => (
       <OnboardingTextSlide
         text={"What is it? You're probably thinking?"}
-        onNext={onNext}
-        autoAdvanceMs={3200}
       />
     ),
   },
@@ -76,31 +66,27 @@ export const onboardingSlides = [
     key: 'onboard-06',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
-      <OnboardingTextSlide text={'It has to be obvious right?'} onNext={onNext} autoAdvanceMs={2800} />
-    ),
+    Component: () => <OnboardingTextSlide text={'It has to be obvious right?'} />,
   },
   {
     key: 'onboard-07',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={'Well.'} onNext={onNext} autoAdvanceMs={1800} />,
+    Component: () => <OnboardingTextSlide text={'Well.'} />,
   },
   {
     key: 'onboard-08',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={'Here it is.'} onNext={onNext} autoAdvanceMs={1800} />,
+    Component: () => <OnboardingTextSlide text={'Here it is.'} />,
   },
   {
     key: 'onboard-09',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
+    Component: () => (
       <OnboardingTextSlide
         text={"I've been meaning to tell you this for a long time."}
-        onNext={onNext}
-        autoAdvanceMs={4200}
         size="md"
       />
     ),
@@ -109,57 +95,49 @@ export const onboardingSlides = [
     key: 'onboard-10',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
-      <OnboardingTextSlide text={'Wow. This is nerve racking..'} onNext={onNext} autoAdvanceMs={3200} />
-    ),
+    Component: () => <OnboardingTextSlide text={'Wow. This is nerve racking..'} />,
   },
   {
     key: 'onboard-11',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={'Uh.'} onNext={onNext} autoAdvanceMs={1500} />,
+    Component: () => <OnboardingTextSlide text={'Uh.'} />,
   },
   {
     key: 'onboard-12',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={'Baby, I...'} onNext={onNext} autoAdvanceMs={2400} />,
+    Component: () => <OnboardingTextSlide text={'Baby, I...'} />,
   },
   {
     key: 'onboard-13',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
-      <OnboardingTextSlide text={'I have a huge crush on you.'} onNext={onNext} autoAdvanceMs={3200} />
-    ),
+    Component: () => <OnboardingTextSlide text={'I have a huge crush on you.'} />,
   },
   {
     key: 'onboard-14',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
-      <OnboardingTextSlide text={'I have a big crush on you.'} onNext={onNext} autoAdvanceMs={3200} />
-    ),
+    Component: () => <OnboardingTextSlide text={'I have a big crush on you.'} />,
   },
   {
     key: 'onboard-15',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={'Like, look at you baby'} onNext={onNext} autoAdvanceMs={2800} />,
+    Component: () => <OnboardingTextSlide text={'Like, look at you baby'} />,
   },
   {
     key: 'onboard-16',
     gradientClass: PINK,
     images: ['photo31.jpg'],
-    Component: ({ onNext }) => (
-      <OnboardingPhotoSlide src="photo31.jpg" caption="wow!!" onNext={onNext} autoAdvanceMs={5200} />
-    ),
+    Component: () => <OnboardingPhotoSlide src="photo31.jpg" caption="wow!!" />,
   },
   {
     key: 'onboard-17',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={"You're so pretty."} onNext={onNext} autoAdvanceMs={2600} />,
+    Component: () => <OnboardingTextSlide text={"You're so pretty."} />,
   },
   {
     key: 'onboard-18',
@@ -178,23 +156,19 @@ export const onboardingSlides = [
     key: 'onboard-19',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => <OnboardingTextSlide text={'Yaaaay!'} onNext={onNext} autoAdvanceMs={2200} />,
+    Component: () => <OnboardingTextSlide text={'Yaaaay!'} />,
   },
   {
     key: 'onboard-20',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
-      <OnboardingTextSlide text={'Thank you beautiful!'} onNext={onNext} autoAdvanceMs={2600} />
-    ),
+    Component: () => <OnboardingTextSlide text={'Thank you beautiful!'} />,
   },
   {
     key: 'onboard-21',
     gradientClass: PINK,
     images: [],
-    Component: ({ onNext }) => (
-      <OnboardingTextSlide text={'Now, I have a big question for you.'} onNext={onNext} autoAdvanceMs={3200} size="md" />
-    ),
+    Component: () => <OnboardingTextSlide text={'Now, I have a big question for you.'} size="md" />,
   },
   {
     key: 'onboard-22',
@@ -214,6 +188,7 @@ export const onboardingSlides = [
   {
     key: 'onboard-23',
     gradientClass: 'bg-white',
+    heartsMode: 'love',
     images: [],
     Component: ({ onNext }) => <OnboardingFinalValentineSlide onYes={onNext} />,
   },

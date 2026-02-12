@@ -10,7 +10,10 @@ function photoLabelFromSrc(src) {
   return `Photo ${m[1]}`
 }
 
-export default function OnboardingPhotoSlide({ src, caption, onNext }) {
+export default function OnboardingPhotoSlide({
+  src,
+  caption,
+}) {
   const [failed, setFailed] = useState(false)
   const [isTiny, setIsTiny] = useState(false)
 
@@ -19,12 +22,7 @@ export default function OnboardingPhotoSlide({ src, caption, onNext }) {
   const showPlaceholder = failed || isTiny
 
   return (
-    <button
-      type="button"
-      onClick={() => onNext?.()}
-      className="mx-auto block w-full max-w-[760px] text-center focus:outline-none focus:ring-2 focus:ring-deep-pink/30 rounded-[32px]"
-      aria-label="Next"
-    >
+    <div className="mx-auto w-full max-w-[760px] text-center">
       <MotionDiv
         className="relative mx-auto overflow-hidden rounded-[32px] border-2 border-valentine-pink/60 bg-white/35 p-4 shadow-glow"
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
@@ -66,11 +64,7 @@ export default function OnboardingPhotoSlide({ src, caption, onNext }) {
             {caption}
           </div>
         ) : null}
-
-        <div className="mt-4 font-body text-xs font-semibold text-[#2a0e1c]/45">
-          Tap to continue
-        </div>
       </MotionDiv>
-    </button>
+    </div>
   )
 }
