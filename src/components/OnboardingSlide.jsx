@@ -20,6 +20,17 @@ function HeartsBackground({ mode = 'default', reduced = false }) {
           { left: '22%', top: '58%', size: 20, opacity: 0.1, duration: 7.8, delay: 0.2, pattern: 'swoop2' },
           { left: '78%', top: '56%', size: 20, opacity: 0.1, duration: 8.2, delay: 0.9, pattern: 'swoop' },
         ]
+      : mode === 'big'
+        ? [
+            { left: '6%', top: '14%', size: 34, opacity: 0.2, duration: 6.0, delay: 0.1, pattern: 'drift' },
+            { left: '86%', top: '12%', size: 38, opacity: 0.18, duration: 6.8, delay: 0.5, pattern: 'drift2' },
+            { left: '14%', top: '72%', size: 42, opacity: 0.15, duration: 6.4, delay: 0.2, pattern: 'swoop2' },
+            { left: '82%', top: '74%', size: 30, opacity: 0.16, duration: 7.1, delay: 0.8, pattern: 'swoop' },
+            { left: '50%', top: '10%', size: 26, opacity: 0.13, duration: 7.5, delay: 0.0, pattern: 'orbit2' },
+            { left: '44%', top: '80%', size: 24, opacity: 0.12, duration: 8.1, delay: 0.6, pattern: 'drift' },
+            { left: '26%', top: '18%', size: 22, opacity: 0.1, duration: 8.6, delay: 0.3, pattern: 'drift2' },
+            { left: '72%', top: '22%', size: 22, opacity: 0.1, duration: 8.2, delay: 0.9, pattern: 'swoop2' },
+          ]
       : [
           { left: '8%', top: '16%', size: 18, opacity: 0.18, duration: 6.4, delay: 0.0, pattern: 'drift' },
           { left: '84%', top: '14%', size: 22, opacity: 0.16, duration: 7.2, delay: 0.4, pattern: 'drift2' },
@@ -124,7 +135,9 @@ function HeartsBackground({ mode = 'default', reduced = false }) {
             textShadow:
               mode === 'love'
                 ? '0 0 26px rgba(255, 20, 147, 0.28)'
-                : '0 0 18px rgba(255, 20, 147, 0.18)',
+                : mode === 'big'
+                  ? '0 0 22px rgba(255, 20, 147, 0.22)'
+                  : '0 0 18px rgba(255, 20, 147, 0.18)',
           }}
           initial={
             reduced
@@ -170,7 +183,7 @@ export default function OnboardingSlide({
   total,
   debug,
   slideKey,
-  heartsMode = 'default', // default | love
+  heartsMode = 'default', // default | big | love
 }) {
   const reduced = useReducedMotion()
   const isWhite = typeof gradientClass === 'string' && gradientClass.includes('bg-white')

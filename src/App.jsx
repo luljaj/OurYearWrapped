@@ -36,8 +36,11 @@ export default function App() {
   const [debug, setDebug] = useState(false)
   const deck = unlocked ? wrappedSlides : onboardingSlides
   const Wrapper = unlocked ? Slide : OnboardingSlide
-  const allowManualNavigation = unlocked || (isDev && debug)
-  const allowBack = allowManualNavigation
+  // Forward navigation should work in normal onboarding (ArrowRight / Space / swipe).
+  // Backward navigation + jump UI should only be available once unlocked, or in dev debug.
+  const allowForward = true
+  const allowBack = unlocked || (isDev && debug)
+  const allowUiNavigation = unlocked || (isDev && debug)
   const total = deck.length
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(1) // 1 forward, -1 backward
@@ -74,9 +77,15 @@ export default function App() {
   const goToEnd = useCallback(() => goToSlide(total - 1), [goToSlide, total])
 
   const handleSwipe = useCallback((deltaX) => {
-    if (deltaX < -SWIPE_THRESHOLD) nextSlide()
-    if (deltaX > SWIPE_THRESHOLD) prevSlide()
-  }, [nextSlide, prevSlide])
+    if (deltaX < -SWIPE_THRESHOLD) {
+      if (!allowForward) return
+      nextSlide()
+    }
+    if (deltaX > SWIPE_THRESHOLD) {
+      if (!allowBack) return
+      prevSlide()
+    }
+  }, [allowBack, allowForward, nextSlide, prevSlide])
 
   const unlockWrapped = useCallback(() => {
     try {
@@ -219,7 +228,7 @@ export default function App() {
       }
 
       if (key === 'ArrowRight') {
-        if (!allowManualNavigation) return
+        if (!allowForward) return
         if (e.repeat) return
         nextSlide()
         return
@@ -240,7 +249,7 @@ export default function App() {
         return
       }
       if (code === 'Space') {
-        if (!allowManualNavigation) return
+        if (!allowForward) return
         if (e.repeat) return
         spaceDown.current = true
       }
@@ -256,7 +265,7 @@ export default function App() {
         return
       }
 
-      if (!allowManualNavigation) return
+      if (!allowForward) return
       if (e.code !== 'Space') return
 
       if (!spaceDown.current) return
@@ -270,10 +279,10 @@ export default function App() {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
     }
-  }, [allowBack, allowManualNavigation, goToStart, nextSlide, prevSlide])
+  }, [allowBack, allowForward, goToStart, nextSlide, prevSlide])
 
   const onPointerDown = (e) => {
-    if (!allowManualNavigation) return
+    if (!allowForward && !allowBack) return
     // Ignore interactive controls to avoid accidental swipes.
     const el = e.target
     if (el && el.closest && el.closest('button,a,input,textarea,select')) return
@@ -281,7 +290,7 @@ export default function App() {
   }
 
   const onPointerUp = (e) => {
-    if (!allowManualNavigation) return
+    if (!allowForward && !allowBack) return
     if (!pointer.current.active) return
     const deltaX = e.clientX - pointer.current.x0
     const deltaY = e.clientY - pointer.current.y0
@@ -298,7 +307,7 @@ export default function App() {
       onPointerUp={onPointerUp}
       onPointerCancel={() => (pointer.current.active = false)}
     >
-      {allowManualNavigation ? (
+      {allowUiNavigation ? (
         <a
           href="#oyw-end"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white/90 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#2a0e1c]"
@@ -360,7 +369,7 @@ export default function App() {
         }}
       />
 
-      {allowManualNavigation ? (
+      {allowUiNavigation ? (
         <>
           <Navigation
             current={currentSlide}

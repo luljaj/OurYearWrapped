@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { motion, usePresence } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { publicImage } from '../../utils/assets.js'
 
 const MotionDiv = motion.div
@@ -13,13 +13,33 @@ function photoLabelFromSrc(src) {
 export default function OnboardingPhotoSlide({
   src,
   caption,
+  onNext,
+  autoAdvanceMs = 0,
 }) {
   const [failed, setFailed] = useState(false)
   const [isTiny, setIsTiny] = useState(false)
+  const [isPresent] = usePresence()
+  const timeoutRef = useRef(null)
 
   const url = useMemo(() => publicImage(src), [src])
   const label = useMemo(() => photoLabelFromSrc(src), [src])
   const showPlaceholder = failed || isTiny
+
+  useEffect(() => {
+    if (!isPresent && timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+  }, [isPresent])
+
+  useEffect(() => {
+    if (!onNext || !autoAdvanceMs) return
+    timeoutRef.current = setTimeout(() => onNext(), autoAdvanceMs)
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+  }, [autoAdvanceMs, onNext])
 
   return (
     <div className="mx-auto w-full max-w-[760px] text-center">
