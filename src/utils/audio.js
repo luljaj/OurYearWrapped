@@ -9,6 +9,7 @@ export const AUDIO_TRACKS = {
 export function getTrackForSlide(slide) {
   const key = slide?.key || ''
 
+  if (key.startsWith('onboard-')) return AUDIO_TRACKS.intro
   if (key.startsWith('opening-')) return AUDIO_TRACKS.intro
   if (key.startsWith('feb-') || key.startsWith('mar-') || key.startsWith('apr-') || key.startsWith('may-'))
     return AUDIO_TRACKS.intro
@@ -23,4 +24,3 @@ export function getTrackForSlide(slide) {
 
   return null
 }
-

@@ -29,7 +29,7 @@ export const januarySlides = [
     Component: () => (
       <PhotoMoment
         photoSrc="photo25.jpg"
-        caption="You carried my snowboard (so cute)"
+        caption="You carried my snowboard, (you're so cute)"
         date="January 2025"
         layout="portrait"
       />

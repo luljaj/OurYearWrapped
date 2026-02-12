@@ -32,3 +32,4 @@ export const slides = [
   ...closingSlides,
 ]
 
+export const wrappedSlides = slides

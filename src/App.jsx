@@ -3,12 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Navigation from './components/Navigation.jsx'
 import NowPlaying from './components/NowPlaying.jsx'
 import ProgressIndicator from './components/ProgressIndicator.jsx'
+import OnboardingSlide from './components/OnboardingSlide.jsx'
 import Slide from './components/Slide.jsx'
-import { slides } from './slides/slides.js'
+import { onboardingSlides } from './slides/Onboarding.jsx'
+import { wrappedSlides } from './slides/slides.js'
 import { publicAudio, publicImage } from './utils/assets.js'
 import {
-  AUTO_ADVANCE_HOLD_MS,
-  AUTO_ADVANCE_INTERVAL_MS,
   PRELOAD_AHEAD_SLIDES,
   SWIPE_THRESHOLD,
 } from './utils/constants.js'
@@ -25,7 +25,17 @@ function preload(src) {
 }
 
 export default function App() {
-  const total = slides.length
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem('oyw_unlocked') === '1'
+    } catch {
+      return false
+    }
+  })
+  const deck = unlocked ? wrappedSlides : onboardingSlides
+  const Wrapper = unlocked ? Slide : OnboardingSlide
+  const allowManualNavigation = unlocked || debug
+  const total = deck.length
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(1) // 1 forward, -1 backward
   const [debug, setDebug] = useState(false)
@@ -34,12 +44,11 @@ export default function App() {
   const [audioPaused, setAudioPaused] = useState(true)
 
   const pointer = useRef({ active: false, x0: 0, y0: 0 })
-  const spaceHoldTimer = useRef(null)
-  const autoAdvanceInterval = useRef(null)
+  const spaceDown = useRef(false)
   const audioRef = useRef(null)
   const audioTrackRef = useRef(null)
 
-  const active = useMemo(() => slides[currentSlide], [currentSlide])
+  const active = useMemo(() => deck[currentSlide], [currentSlide, deck])
   const activeTrack = useMemo(() => getTrackForSlide(active), [active])
 
   const nextSlide = useCallback(() => {
@@ -61,31 +70,27 @@ export default function App() {
   const goToStart = useCallback(() => goToSlide(0), [goToSlide])
   const goToEnd = useCallback(() => goToSlide(total - 1), [goToSlide, total])
 
-  const stopAutoAdvance = useCallback(() => {
-    if (autoAdvanceInterval.current) {
-      clearInterval(autoAdvanceInterval.current)
-      autoAdvanceInterval.current = null
-    }
-  }, [])
-
-  const startAutoAdvance = useCallback(() => {
-    stopAutoAdvance()
-    autoAdvanceInterval.current = setInterval(() => {
-      setDirection(1)
-      setCurrentSlide((s) => (s >= total - 1 ? s : s + 1))
-    }, AUTO_ADVANCE_INTERVAL_MS)
-  }, [stopAutoAdvance, total])
-
   const handleSwipe = useCallback((deltaX) => {
     if (deltaX < -SWIPE_THRESHOLD) nextSlide()
     if (deltaX > SWIPE_THRESHOLD) prevSlide()
   }, [nextSlide, prevSlide])
 
+  const unlockWrapped = useCallback(() => {
+    try {
+      localStorage.setItem('oyw_unlocked', '1')
+    } catch {
+      // ignore
+    }
+    setDirection(1)
+    setCurrentSlide(0)
+    setUnlocked(true)
+  }, [])
+
   useEffect(() => {
     // Preload images for the next slides (best-effort).
     const ahead = []
     for (let i = 1; i <= PRELOAD_AHEAD_SLIDES; i++) {
-      const s = slides[currentSlide + i]
+      const s = deck[currentSlide + i]
       if (!s) continue
       for (const img of s.images || []) ahead.push(img)
     }
@@ -99,7 +104,7 @@ export default function App() {
     }
     const t = setTimeout(run, 120)
     return () => clearTimeout(t)
-  }, [currentSlide])
+  }, [currentSlide, deck])
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -155,19 +160,37 @@ export default function App() {
 
   useEffect(() => {
     const onKeyDown = (e) => {
-      if (e.key === 'ArrowRight') {
+      const target = e.target
+      if (
+        target &&
+        target.closest &&
+        target.closest('input,textarea,select,[contenteditable="true"]')
+      ) {
+        return
+      }
+
+      const key = e.key
+      const code = e.code
+
+      // Prevent page scrolling/scroll-jank on slide keys even when navigation is locked.
+      if (key === 'ArrowRight' || key === 'ArrowLeft' || key === 'Escape' || code === 'Space') {
         e.preventDefault()
+      }
+
+      if (!allowManualNavigation) {
+        if (e.key.toLowerCase() === 'd') setDebug((v) => !v)
+        return
+      }
+
+      if (key === 'ArrowRight') {
         nextSlide()
         return
       }
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault()
+      if (key === 'ArrowLeft') {
         prevSlide()
         return
       }
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        stopAutoAdvance()
+      if (key === 'Escape') {
         goToStart()
         return
       }
@@ -175,27 +198,28 @@ export default function App() {
         setDebug((v) => !v)
         return
       }
-      if (e.code === 'Space') {
-        // Tap space: next. Hold: auto-advance (until released).
-        if (spaceHoldTimer.current || autoAdvanceInterval.current) return
-        spaceHoldTimer.current = setTimeout(() => {
-          spaceHoldTimer.current = null
-          startAutoAdvance()
-        }, AUTO_ADVANCE_HOLD_MS)
+      if (code === 'Space') {
+        if (e.repeat) return
+        spaceDown.current = true
       }
     }
 
     const onKeyUp = (e) => {
-      if (e.code !== 'Space') return
-
-      if (spaceHoldTimer.current) {
-        clearTimeout(spaceHoldTimer.current)
-        spaceHoldTimer.current = null
-        nextSlide()
+      const target = e.target
+      if (
+        target &&
+        target.closest &&
+        target.closest('input,textarea,select,[contenteditable="true"]')
+      ) {
         return
       }
 
-      stopAutoAdvance()
+      if (!allowManualNavigation) return
+      if (e.code !== 'Space') return
+
+      if (!spaceDown.current) return
+      spaceDown.current = false
+      nextSlide()
     }
 
     window.addEventListener('keydown', onKeyDown, { passive: false })
@@ -204,11 +228,10 @@ export default function App() {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
     }
-  }, [goToStart, nextSlide, prevSlide, startAutoAdvance, stopAutoAdvance])
-
-  useEffect(() => () => stopAutoAdvance(), [stopAutoAdvance])
+  }, [allowManualNavigation, goToStart, nextSlide, prevSlide])
 
   const onPointerDown = (e) => {
+    if (!allowManualNavigation) return
     // Ignore interactive controls to avoid accidental swipes.
     const el = e.target
     if (el && el.closest && el.closest('button,a,input,textarea,select')) return
@@ -216,6 +239,7 @@ export default function App() {
   }
 
   const onPointerUp = (e) => {
+    if (!allowManualNavigation) return
     if (!pointer.current.active) return
     const deltaX = e.clientX - pointer.current.x0
     const deltaY = e.clientY - pointer.current.y0
@@ -232,15 +256,17 @@ export default function App() {
       onPointerUp={onPointerUp}
       onPointerCancel={() => (pointer.current.active = false)}
     >
-      <a
-        href="#oyw-end"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white/90 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#2a0e1c]"
-      >
-        Skip to the end
-      </a>
+      {allowManualNavigation ? (
+        <a
+          href="#oyw-end"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white/90 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#2a0e1c]"
+        >
+          Skip to the end
+        </a>
+      ) : null}
 
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
-        <Slide
+        <Wrapper
           key={active.key}
           direction={direction}
           gradientClass={active.gradientClass}
@@ -249,8 +275,8 @@ export default function App() {
           debug={debug}
           slideKey={active.key}
         >
-          <active.Component />
-        </Slide>
+          <active.Component onUnlock={unlockWrapped} onNext={nextSlide} onPrev={prevSlide} />
+        </Wrapper>
       </AnimatePresence>
 
       <NowPlaying
@@ -273,18 +299,21 @@ export default function App() {
         }}
       />
 
-      <Navigation
-        current={currentSlide}
-        total={total}
-        onPrev={prevSlide}
-        onNext={nextSlide}
-        onStart={goToStart}
-        onEnd={goToEnd}
-        debug={debug}
-        onJump={goToSlide}
-      />
-
-      <ProgressIndicator total={total} current={currentSlide} onJump={goToSlide} />
+      {allowManualNavigation ? (
+        <>
+          <Navigation
+            current={currentSlide}
+            total={total}
+            onPrev={prevSlide}
+            onNext={nextSlide}
+            onStart={goToStart}
+            onEnd={goToEnd}
+            debug={debug}
+            onJump={goToSlide}
+          />
+          <ProgressIndicator total={total} current={currentSlide} onJump={goToSlide} />
+        </>
+      ) : null}
 
       <div id="oyw-end" className="sr-only" aria-hidden="true" />
     </div>

@@ -78,9 +78,8 @@ export default function Navigation({
       </div>
 
       <div className="pointer-events-none absolute bottom-8 left-0 right-0 text-center font-body text-[11px] font-semibold text-[color:var(--oyw-muted)]">
-        Swipe, use arrow keys, or tap space (hold space to auto-advance)
+        Swipe, use arrow keys, or tap space
       </div>
     </div>
   )
 }
-
