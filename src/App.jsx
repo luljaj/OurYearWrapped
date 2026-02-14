@@ -1,12 +1,11 @@
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Navigation from './components/Navigation.jsx'
-import NowPlaying from './components/NowPlaying.jsx'
-import ProgressIndicator from './components/ProgressIndicator.jsx'
 import OnboardingSlide from './components/OnboardingSlide.jsx'
 import Slide from './components/Slide.jsx'
 import { onboardingSlides } from './slides/Onboarding.jsx'
 import { wrappedSlides } from './slides/slides.js'
+import { DebugContext } from './context/DebugContext.jsx'
 import { publicAudio, publicImage } from './utils/assets.js'
 import {
   PRELOAD_AHEAD_SLIDES,
@@ -28,9 +27,12 @@ export default function App() {
   const isDev = import.meta.env.DEV
   const [unlocked, setUnlocked] = useState(() => {
     try {
-      return localStorage.getItem('oyw_unlocked') === '1'
+      const v = localStorage.getItem('oyw_unlocked')
+      // Default to unlocked (Our Year Wrapped) unless explicitly locked.
+      if (v === null) return true
+      return v === '1'
     } catch {
-      return false
+      return true
     }
   })
   const [debug, setDebug] = useState(false)
@@ -97,6 +99,17 @@ export default function App() {
     setCurrentSlide(0)
     setUnlocked(true)
   }, [])
+
+  useEffect(() => {
+    // Persist the new default so refreshes stay in wrapped mode.
+    if (!unlocked) return
+    try {
+      const v = localStorage.getItem('oyw_unlocked')
+      if (v === null) localStorage.setItem('oyw_unlocked', '1')
+    } catch {
+      // ignore
+    }
+  }, [unlocked])
 
   useEffect(() => {
     // Preload images for the next slides (best-effort).
@@ -301,12 +314,13 @@ export default function App() {
   }
 
   return (
-    <div
-      className="relative h-full w-full overflow-hidden"
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerCancel={() => (pointer.current.active = false)}
-    >
+    <DebugContext.Provider value={debug}>
+      <div
+        className="relative h-full w-full overflow-hidden"
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => (pointer.current.active = false)}
+      >
       {allowUiNavigation ? (
         <a
           href="#oyw-end"
@@ -331,61 +345,21 @@ export default function App() {
         </Wrapper>
       </AnimatePresence>
 
-      <NowPlaying
-        enabled={audioEnabled}
-        hasTrack={Boolean(activeTrack)}
-        error={audioError}
-        paused={audioPaused}
-        needsUnmute={audioNeedsUnmute && audioEnabled && Boolean(activeTrack)}
-        trackTitle={activeTrack?.title || null}
-        onToggleEnabled={() => {
-          setAudioEnabled((v) => {
-            const next = !v
-            if (!next) setAudioNeedsUnmute(false)
-            return next
-          })
-        }}
-        onTogglePause={() => {
-          const audio = audioRef.current
-          if (!audio) return
-          if (audio.paused) {
-            Promise.resolve(audio.play()).catch(() => {
-              setAudioPaused(true)
-            })
-          } else {
-            audio.pause()
-          }
-        }}
-        onUnmute={() => {
-          const audio = audioRef.current
-          if (!audio) return
-          audio.muted = false
-          Promise.resolve(audio.play())
-            .then(() => setAudioNeedsUnmute(false))
-            .catch(() => {
-              // blocked; keep state so user can retry
-              setAudioNeedsUnmute(true)
-            })
-        }}
-      />
-
-      {allowUiNavigation ? (
-        <>
-          <Navigation
-            current={currentSlide}
-            total={total}
-            onPrev={prevSlide}
-            onNext={nextSlide}
-            onStart={goToStart}
-            onEnd={goToEnd}
-            debug={debug}
-            onJump={goToSlide}
-          />
-          <ProgressIndicator total={total} current={currentSlide} onJump={goToSlide} />
-        </>
-      ) : null}
+	      {allowUiNavigation ? (
+	        <>
+	          <Navigation
+	            current={currentSlide}
+	            total={total}
+	            onStart={goToStart}
+	            onEnd={goToEnd}
+	            debug={debug}
+	            onJump={goToSlide}
+	          />
+	        </>
+	      ) : null}
 
       <div id="oyw-end" className="sr-only" aria-hidden="true" />
-    </div>
+      </div>
+    </DebugContext.Provider>
   )
 }

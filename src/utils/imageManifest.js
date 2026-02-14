@@ -1,0 +1,42 @@
+// Generated from public/images at build time (or manually re-run the generator).
+// Only includes browser-friendly extensions.
+// For duplicate basenames, prefers: .jpeg > .jpg > .png > .webp > .gif
+
+export const IMAGE_MANIFEST = [
+  "IMG_4966 Background Removed.png",
+  "IMG_4966.JPG",
+  "photo1.jpg",
+  "photo2.jpeg",
+  "photo3.jpeg",
+  "photo4.jpg",
+  "photo5.jpeg",
+  "photo6.jpeg",
+  "photo7.jpeg",
+  "photo8.jpeg",
+  "photo9.jpeg",
+  "photo10.jpg",
+  "photo11.jpeg",
+  "photo12.jpg",
+  "photo13.jpeg",
+  "photo14.jpeg",
+  "photo15.jpeg",
+  "photo16.jpeg",
+  "photo17.jpeg",
+  "photo18.jpeg",
+  "photo19.jpg",
+  "photo20.jpg",
+  "photo21.jpg",
+  "photo22.jpeg",
+  "photo23.jpeg",
+  "photo24.jpeg",
+  "photo25.jpeg",
+  "photo26.jpeg",
+  "photo27.jpeg",
+  "photo28.jpeg",
+  "photo29.jpeg",
+  "photo30.jpeg",
+  "photo31.jpg",
+  "photo32.jpeg",
+  "photo33.jpeg",
+  "photo34.jpg"
+]

@@ -12,10 +12,10 @@ export const maySlides = [
   {
     key: 'may-2',
     gradientClass: 'binghamton-gradient',
-    images: ['photo4.jpg'],
+    images: ['photo4.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo4.jpg"
+        photoSrc="photo4.jpeg"
         caption="We both chose Binghamton 💚"
         date="Commitment Day"
         layout="landscape"
@@ -25,12 +25,12 @@ export const maySlides = [
   {
     key: 'may-3',
     gradientClass: 'spring-gradient',
-    images: ['photo5.jpg'],
+    images: ['photo5.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo5.jpg"
-        caption="Cici joined the family"
-        date="Labubu Cici"
+        photoSrc="photo5.jpeg"
+        caption="Cici"
+        date="You bought Cici off of that Tiktok Live"
         layout="portrait"
       />
     ),
@@ -39,6 +39,6 @@ export const maySlides = [
     key: 'may-4',
     gradientClass: 'spring-gradient',
     images: [],
-    Component: () => <QuoteSlide text={'And your miu miu bag just refused to deliver'} />,
+    Component: () => <QuoteSlide text={'And your Miu miu bag was in shipping hell'} />,
   },
 ]

@@ -1,31 +1,57 @@
 import { motion } from 'framer-motion'
 import { publicImage } from '../utils/assets.js'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { useDebug } from '../context/DebugContext.jsx'
 
 const MotionDiv = motion.div
 
 function photoLabelFromSrc(src) {
-  const m = String(src || '').match(/photo(\d+)\.jpg/i)
+  const m = String(src || '').match(/photo(\d+)\.(?:jpe?g)/i)
   if (!m) return null
   return `Photo ${m[1]}`
 }
 
+function swapJpegExt(filename) {
+  const s = String(filename || '')
+  if (s.toLowerCase().endsWith('.jpeg')) return s.slice(0, -5) + '.jpg'
+  if (s.toLowerCase().endsWith('.jpg')) return s.slice(0, -4) + '.jpeg'
+  return null
+}
+
 function Polaroid({ src, alt, caption }) {
+  const debug = useDebug()
   const [failed, setFailed] = useState(false)
   const [isTiny, setIsTiny] = useState(false)
+  const [resolvedSrc, setResolvedSrc] = useState(src)
+  const triedAltRef = useRef(false)
   const label = useMemo(() => photoLabelFromSrc(src), [src])
   const showPlaceholder = failed || isTiny
+  const url = useMemo(() => publicImage(resolvedSrc), [resolvedSrc])
 
   return (
-    <div className="aspect-[4/3] overflow-hidden rounded-xl bg-white/30">
+    <div className="relative min-h-[240px] overflow-hidden rounded-2xl border border-white/35 bg-transparent flex items-center justify-center">
       {!failed ? (
         <img
-          src={publicImage(src)}
+          src={url}
           alt={alt || label || 'Grid photo'}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover"
-          onError={() => setFailed(true)}
+          className="block max-h-[70vh] h-auto w-auto max-w-full object-contain"
+          onError={() => {
+            if (triedAltRef.current) {
+              setFailed(true)
+              return
+            }
+            const altSrc = swapJpegExt(resolvedSrc)
+            if (!altSrc || altSrc === resolvedSrc) {
+              setFailed(true)
+              return
+            }
+            triedAltRef.current = true
+            setFailed(false)
+            setIsTiny(false)
+            setResolvedSrc(altSrc)
+          }}
           onLoad={(e) => {
             const el = e.currentTarget
             setIsTiny(el.naturalWidth <= 2 && el.naturalHeight <= 2)
@@ -34,10 +60,16 @@ function Polaroid({ src, alt, caption }) {
       ) : null}
 
       {showPlaceholder ? (
-        <div className="absolute inset-0 grid place-items-center">
-          <div className="rounded-full bg-white/60 px-3 py-1 text-[11px] font-bold text-[#2a0e1c]">
+        <div className="absolute inset-0 grid place-items-center bg-white/10">
+          <div className="rounded-full bg-white/70 px-3 py-1 text-[11px] font-bold text-[#2a0e1c]">
             {caption || label || 'Photo'}
           </div>
+        </div>
+      ) : null}
+
+      {debug ? (
+        <div className="pointer-events-none absolute bottom-2 left-2 z-40 rounded-full bg-white/85 px-2 py-1 font-mono text-[10px] font-bold text-[#2a0e1c] shadow-glow">
+          {resolvedSrc !== src ? `${src} -> ${resolvedSrc}` : src}
         </div>
       ) : null}
     </div>
@@ -58,24 +90,19 @@ export default function PhotoGrid({ photos = [], title, subtitle }) {
         </p>
       ) : null}
 
-      <div className="relative mt-8 h-[420px] w-full md:h-[520px]">
+      <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
         {photos.map((p, idx) => (
           <MotionDiv
             key={idx}
-            className="oyw-glass absolute w-[46%] rounded-2xl p-3 shadow-glow md:w-[40%]"
-            style={{
-              left: p.left,
-              top: p.top,
-              transform: `rotate(${p.rotation || 0}deg)`,
-            }}
-            initial={{ opacity: 0, y: -40, rotate: (p.rotation || 0) - 6 }}
-            animate={{ opacity: 1, y: 0, rotate: p.rotation || 0 }}
-            transition={{ delay: idx * 0.12, duration: 0.8, type: 'spring' }}
+            className="rounded-2xl"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.08, duration: 0.6, ease: 'easeOut' }}
           >
             <div className="relative">
               <Polaroid src={p.src} alt={p.alt || `Grid photo ${idx + 1}`} caption={p.caption} />
             </div>
-            <div className="mt-2 text-center font-body text-[11px] font-semibold text-[color:var(--oyw-muted)]">
+            <div className="mt-3 text-center font-body text-xs font-semibold text-[color:var(--oyw-muted)]">
               {p.caption || 'memory'}
             </div>
           </MotionDiv>

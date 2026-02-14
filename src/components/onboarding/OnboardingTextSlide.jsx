@@ -1,36 +1,13 @@
-import { motion, usePresence, useReducedMotion } from 'framer-motion'
-import { useEffect, useRef } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 
 const MotionDiv = motion.div
 
 export default function OnboardingTextSlide({
   text,
-  onNext,
-  autoAdvanceMs = 0,
   size = 'lg', // xxs | xs | sm | md | lg | xl
   effect, // shrinkShake
 }) {
   const reduced = useReducedMotion()
-  const [isPresent] = usePresence()
-  const timeoutRef = useRef(null)
-
-  useEffect(() => {
-    // AnimatePresence keeps exiting slides mounted for the exit animation.
-    // If the user manually advances, cancel any pending auto-advance to avoid skipping.
-    if (!isPresent && timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-  }, [isPresent])
-
-  useEffect(() => {
-    if (!onNext || !autoAdvanceMs) return
-    timeoutRef.current = setTimeout(() => onNext(), autoAdvanceMs)
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-  }, [autoAdvanceMs, onNext])
 
   const shake = effect === 'shrinkShake' && !reduced
   const sizeClass =

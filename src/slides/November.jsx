@@ -39,11 +39,11 @@ export const novemberSlides = [
   {
     key: 'nov-3',
     gradientClass: 'fall-gradient',
-    images: ['photo29.jpg'],
+    images: ['photo29.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo29.jpg"
-        caption="Texas Roadhouse walk (bad steak included)"
+        photoSrc="photo29.jpeg"
+        caption="Texas Roadhouse"
         date="November 2025"
         layout="landscape"
       />
@@ -52,10 +52,10 @@ export const novemberSlides = [
   {
     key: 'nov-4',
     gradientClass: 'fall-gradient',
-    images: ['photo30.jpg'],
+    images: ['photo30.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo30.jpg"
+        photoSrc="photo30.jpeg"
         caption="Breaking Bad begins"
         date="November 2025"
         layout="portrait"
@@ -86,10 +86,10 @@ export const novemberSlides = [
   {
     key: 'nov-7',
     gradientClass: 'celebration-gradient',
-    images: ['photo20.jpg'],
+    images: ['photo20.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo20.jpg"
+        photoSrc="photo20.jpeg"
         caption="My forever love, my angel."
         date="Bouquet"
         layout="portrait"
@@ -99,10 +99,10 @@ export const novemberSlides = [
   {
     key: 'nov-8',
     gradientClass: 'celebration-gradient',
-    images: ['photo21.jpg'],
+    images: ['photo21.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo21.jpg"
+        photoSrc="photo21.jpeg"
         caption="Anniversary together"
         date="November 2025"
         layout="landscape"

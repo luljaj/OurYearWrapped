@@ -9,7 +9,7 @@ export const marchSlides = [
     key: 'mar-1',
     gradientClass: 'spring-gradient',
     images: [],
-    Component: () => <MonthIntro month="March 2025" subtitle="Pickleball, boba, and a new rhythm." />,
+    Component: () => <MonthIntro month="March 2025" subtitle="Pickleball and Boba arc" />,
   },
   {
     key: 'mar-2',
@@ -28,10 +28,10 @@ export const marchSlides = [
   {
     key: 'mar-3b',
     gradientClass: 'spring-gradient',
-    images: ['photo26.jpg'],
+    images: ['photo26.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo26.jpg"
+        photoSrc="photo26.jpeg"
         caption="Pickleball trip"
         date="March 2025"
         layout="landscape"
@@ -41,10 +41,10 @@ export const marchSlides = [
   {
     key: 'mar-4',
     gradientClass: 'spring-gradient',
-    images: ['photo2.jpg'],
+    images: ['photo2.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo2.jpg"
+        photoSrc="photo2.jpeg"
         caption="Peekskill boba trip"
         date="March 2025"
         layout="landscape"

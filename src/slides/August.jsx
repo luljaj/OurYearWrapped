@@ -1,8 +1,6 @@
 import MonthIntro from '../components/MonthIntro.jsx'
 import QuoteSlide from '../components/QuoteSlide.jsx'
-import StatReveal from '../components/StatReveal.jsx'
 import PhotoMoment from '../components/PhotoMoment.jsx'
-import MultiStat from '../components/MultiStat.jsx'
 
 export const augustSlides = [
   {
@@ -15,48 +13,43 @@ export const augustSlides = [
     key: 'aug-1b',
     gradientClass: 'struggle-gradient',
     images: [],
-    Component: () => <QuoteSlide text={'College began… and it was really hard at first'} fontSize="lg" />,
+    Component: () => <QuoteSlide text={'We started college together'} fontSize="lg" />,
   },
   {
     key: 'aug-1c',
     gradientClass: 'struggle-gradient',
-    images: [],
-    Component: () => <QuoteSlide text={'The sushi burrito scam'} fontSize="lg" />,
-  },
-  {
-    key: 'aug-1d',
-    gradientClass: 'struggle-gradient',
-    images: [],
-    Component: () => <QuoteSlide text={'Being able to eat outside the marketplace.. miss it.'} fontSize="lg" />,
-  },
-  {
-    key: 'aug-2',
-    gradientClass: 'summer-gradient',
-    images: [],
-    Component: () => <QuoteSlide text={'Distance… and I missed you the whole time'} fontSize="lg" />,
-  },
-  {
-    key: 'aug-3',
-    gradientClass: 'summer-gradient',
-    images: [],
+    images: ['photo16.jpeg'],
     Component: () => (
-      <StatReveal
-        number={'Came home early because missing you was too hard'}
-        description="True story."
-        icon="💗"
+      <PhotoMoment
+        photoSrc="photo16.jpeg"
+        caption="Taichi Sushi Burrito"
+        date="it was lowkey a scam"
+        layout="landscape"
       />
     ),
   },
   {
-    key: 'aug-4',
-    gradientClass: 'summer-gradient',
-    images: ['photo15.jpg'],
+    key: 'aug-1c2',
+    gradientClass: 'struggle-gradient',
+    images: ['photo33.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo15.jpg"
-        caption="Came home to your beautiful new look"
-        date="New hair color reveal"
-        layout="portrait"
+        photoSrc="photo33.jpeg"
+        caption="Going to Pho-nomenal"
+        layout="landscape"
+      />
+    ),
+  },
+  {
+    key: 'aug-1d',
+    gradientClass: 'struggle-gradient',
+    images: ['photo32.jpeg'],
+    Component: () => (
+      <PhotoMoment
+        photoSrc="photo32.jpeg"
+        caption="Eating outside marketplace"
+        date="Seems so long ago"
+        layout="landscape"
       />
     ),
   },
@@ -64,15 +57,6 @@ export const augustSlides = [
     key: 'aug-5',
     gradientClass: 'summer-gradient',
     images: [],
-    Component: () => (
-      <MultiStat
-        title="August moments"
-        stats={[
-          { number: 'Depop', label: 'Selling era', icon: '📦' },
-          { number: 1, label: "Jones Beach in mom's car", icon: '🚗' },
-          { number: 1, label: 'Edamame tricks you fell for 😂', icon: '🫘' },
-        ]}
-      />
-    ),
+    Component: () => <QuoteSlide text={'August\n\nNew beginnings for us and our relationship'} fontSize="lg" />,
   },
 ]

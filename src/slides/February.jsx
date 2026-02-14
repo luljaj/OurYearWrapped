@@ -12,11 +12,11 @@ export const februarySlides = [
   {
     key: 'feb-2',
     gradientClass: 'spring-gradient',
-    images: ['photo1.jpg'],
+    images: ['photo1.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo1.jpg"
-        caption="Where it all started… again"
+        photoSrc="photo1.jpeg"
+        caption="Hudson Prime for valentines last year"
         date="Valentine's Day 2025"
         layout="portrait"
       />

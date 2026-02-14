@@ -11,7 +11,7 @@ function OctoberMoviesAndSleepovers() {
         fontSize="lg"
       />
       <div className="mt-6">
-        <StatReveal number={19} description="Sleepovers" icon="🌙" />
+        <StatReveal number={19} description="Sleepovers in college so far" icon="🌙" />
       </div>
     </div>
   )
@@ -25,25 +25,12 @@ export const octoberSlides = [
     Component: () => <MonthIntro month="October 2025" subtitle="Movies, drives, Halloween, and learning." />,
   },
   {
-    key: 'oct-2',
-    gradientClass: 'fall-gradient',
-    images: ['photo18.jpg'],
-    Component: () => (
-      <PhotoMoment
-        photoSrc="photo18.jpg"
-        caption="Beautiful drives, even more beautiful you"
-        date="Drive back to school"
-        layout="landscape"
-      />
-    ),
-  },
-  {
     key: 'oct-3',
     gradientClass: 'fall-gradient',
-    images: ['photo28.jpg'],
+    images: ['photo28.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo28.jpg"
+        photoSrc="photo28.jpeg"
         caption="Case comp (we deserved better 😤)"
         date="October 2025"
         layout="landscape"
@@ -65,10 +52,10 @@ export const octoberSlides = [
   {
     key: 'oct-6',
     gradientClass: 'fall-gradient',
-    images: ['photo19.jpg'],
+    images: ['photo19.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo19.jpg"
+        photoSrc="photo19.jpeg"
         caption="Gorgeous all weekend long 🎃"
         date="Halloween"
         layout="portrait"

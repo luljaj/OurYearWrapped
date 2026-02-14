@@ -17,12 +17,24 @@ export const decemberSlides = [
     Component: () => <QuoteSlide text={'Stranger Things debates & finals survival'} fontSize="lg" />,
   },
   {
-    key: 'dec-3',
+    key: 'dec-2b',
     gradientClass: 'winter-gradient',
-    images: ['photo22.jpg'],
+    images: ['photo34.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo22.jpg"
+        photoSrc="photo34.jpeg"
+        caption="Stranger things and sushi"
+        layout="landscape"
+      />
+    ),
+  },
+  {
+    key: 'dec-3',
+    gradientClass: 'winter-gradient',
+    images: ['photo22.jpeg'],
+    Component: () => (
+      <PhotoMoment
+        photoSrc="photo22.jpeg"
         caption="Finally home for the holidays"
         date="Back home together"
         layout="landscape"
@@ -47,11 +59,11 @@ export const decemberSlides = [
   {
     key: 'dec-5',
     gradientClass: 'winter-gradient',
-    images: ['photo23.jpg'],
+    images: ['photo23.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo23.jpg"
-        caption="Korean BBQ round 2, you're getting good at cooking!"
+        photoSrc="photo23.jpeg"
+        caption="Korean BBQ round 2, youre so good at cooking!"
         date="Christmas NYC"
         layout="portrait"
       />

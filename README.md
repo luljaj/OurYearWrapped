@@ -11,7 +11,7 @@ npm run dev
 
 ## Photos
 
-Placeholder images live in `public/images/photo1.jpg` ... `public/images/photo25.jpg`.
+Placeholder images live in `public/images/photo1.jpeg` ... `public/images/photo25.jpeg`.
 
 Replace them with real photos using the same filenames.
 

@@ -20,12 +20,25 @@ export const septemberSlides = [
   {
     key: 'sep-3',
     gradientClass: 'struggle-gradient',
-    images: ['photo17.jpg'],
+    images: ['photo17.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo17.jpg"
+        photoSrc="photo17.jpeg"
         caption="You gave me the best birthday of my life"
         date="Birthday celebration"
+        layout="landscape"
+      />
+    ),
+  },
+  {
+    key: 'oct-2',
+    gradientClass: 'fall-gradient',
+    images: ['photo18.jpeg'],
+    Component: () => (
+      <PhotoMoment
+        photoSrc="photo18.jpeg"
+        caption="Beautiful drives, even more beautiful you"
+        date="Drive back to school"
         layout="landscape"
       />
     ),

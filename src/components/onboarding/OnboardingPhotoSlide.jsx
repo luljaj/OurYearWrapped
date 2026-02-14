@@ -1,45 +1,36 @@
-import { motion, usePresence } from 'framer-motion'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useMemo, useRef, useState } from 'react'
 import { publicImage } from '../../utils/assets.js'
+import { useDebug } from '../../context/DebugContext.jsx'
 
 const MotionDiv = motion.div
 
 function photoLabelFromSrc(src) {
-  const m = String(src || '').match(/photo(\d+)\.jpg/i)
+  const m = String(src || '').match(/photo(\d+)\.(?:jpe?g)/i)
   if (!m) return null
   return `Photo ${m[1]}`
+}
+
+function swapJpegExt(filename) {
+  const s = String(filename || '')
+  if (s.toLowerCase().endsWith('.jpeg')) return s.slice(0, -5) + '.jpg'
+  if (s.toLowerCase().endsWith('.jpg')) return s.slice(0, -4) + '.jpeg'
+  return null
 }
 
 export default function OnboardingPhotoSlide({
   src,
   caption,
-  onNext,
-  autoAdvanceMs = 0,
 }) {
+  const debug = useDebug()
   const [failed, setFailed] = useState(false)
   const [isTiny, setIsTiny] = useState(false)
-  const [isPresent] = usePresence()
-  const timeoutRef = useRef(null)
+  const triedAltRef = useRef(false)
+  const [resolvedSrc, setResolvedSrc] = useState(src)
 
-  const url = useMemo(() => publicImage(src), [src])
+  const url = useMemo(() => publicImage(resolvedSrc), [resolvedSrc])
   const label = useMemo(() => photoLabelFromSrc(src), [src])
   const showPlaceholder = failed || isTiny
-
-  useEffect(() => {
-    if (!isPresent && timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-  }, [isPresent])
-
-  useEffect(() => {
-    if (!onNext || !autoAdvanceMs) return
-    timeoutRef.current = setTimeout(() => onNext(), autoAdvanceMs)
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-  }, [autoAdvanceMs, onNext])
 
   return (
     <div className="mx-auto w-full max-w-[760px] text-center">
@@ -49,15 +40,29 @@ export default function OnboardingPhotoSlide({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.9, ease: 'easeOut' }}
       >
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-white/30">
+        <div className="relative w-full min-h-[70vh] overflow-hidden rounded-3xl bg-white/30 flex items-center justify-center">
           {!failed ? (
             <img
               src={url}
               alt={caption || label || 'Photo'}
-              className="h-full w-full object-cover"
+              className="block max-h-[70vh] w-auto max-w-full object-contain"
               loading="lazy"
               decoding="async"
-              onError={() => setFailed(true)}
+              onError={() => {
+                if (triedAltRef.current) {
+                  setFailed(true)
+                  return
+                }
+                const altSrc = swapJpegExt(resolvedSrc)
+                if (!altSrc || altSrc === resolvedSrc) {
+                  setFailed(true)
+                  return
+                }
+                triedAltRef.current = true
+                setFailed(false)
+                setIsTiny(false)
+                setResolvedSrc(altSrc)
+              }}
               onLoad={(e) => {
                 const el = e.currentTarget
                 setIsTiny(el.naturalWidth <= 2 && el.naturalHeight <= 2)
@@ -75,6 +80,12 @@ export default function OnboardingPhotoSlide({
                   Replace in <span className="font-mono">public/images/</span>
                 </div>
               </div>
+            </div>
+          ) : null}
+
+          {debug ? (
+            <div className="pointer-events-none absolute bottom-3 left-3 z-40 rounded-full bg-white/85 px-3 py-1 font-mono text-[11px] font-bold text-[#2a0e1c] shadow-glow">
+              {resolvedSrc !== src ? `${src} -> ${resolvedSrc}` : src}
             </div>
           ) : null}
         </div>

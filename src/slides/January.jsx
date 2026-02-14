@@ -12,10 +12,10 @@ export const januarySlides = [
   {
     key: 'jan-2',
     gradientClass: 'winter-gradient',
-    images: ['photo24.jpg'],
+    images: ['photo24.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo24.jpg"
+        photoSrc="photo24.jpeg"
         caption="Back to our roots at Royal indian"
         date="Back to school"
         layout="landscape"
@@ -25,10 +25,10 @@ export const januarySlides = [
   {
     key: 'jan-3',
     gradientClass: 'winter-gradient',
-    images: ['photo25.jpg'],
+    images: ['photo25.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo25.jpg"
+        photoSrc="photo25.jpeg"
         caption="You carried my snowboard, (you're so cute)"
         date="January 2025"
         layout="portrait"

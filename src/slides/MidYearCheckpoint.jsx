@@ -40,7 +40,7 @@ function SplitCheckpoint() {
             Montage
           </div>
           <div className="mt-4 grid gap-4">
-            <PhotoMoment photoSrc="photo13.jpg" caption="Summer nights" date="July 2025" layout="landscape" />
+            <PhotoMoment photoSrc="photo13.jpeg" caption="Summer nights" date="July 2025" layout="landscape" />
           </div>
         </MotionDiv>
       </div>
@@ -52,7 +52,7 @@ export const midYearSlides = [
   {
     key: 'mid-1',
     gradientClass: 'summer-gradient',
-    images: ['photo13.jpg'],
+    images: ['photo13.jpeg'],
     Component: SplitCheckpoint,
   },
   {

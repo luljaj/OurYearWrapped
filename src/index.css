@@ -81,3 +81,21 @@ body {
     transform: translateY(110vh) rotate(360deg);
   }
 }
+
+@keyframes oyw-marquee-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes oyw-marquee-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

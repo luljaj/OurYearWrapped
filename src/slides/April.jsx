@@ -12,7 +12,7 @@ function GreenwichWithPhoto() {
         </div>
         <div>
           <PhotoMoment
-            photoSrc="photo27.jpg"
+            photoSrc="photo27.jpeg"
             caption="Greenwich trip"
             date="April 2025"
             layout="landscape"
@@ -34,10 +34,10 @@ export const aprilSlides = [
   {
     key: 'apr-2',
     gradientClass: 'spring-gradient',
-    images: ['photo3.jpg'],
+    images: ['photo3.jpeg'],
     Component: () => (
       <PhotoMoment
-        photoSrc="photo3.jpg"
+        photoSrc="photo3.jpeg"
         caption="Our future home 💚"
         date="Binghamton tour"
         layout="landscape"
@@ -47,7 +47,7 @@ export const aprilSlides = [
   {
     key: 'apr-3',
     gradientClass: 'spring-gradient',
-    images: ['photo27.jpg'],
+    images: ['photo27.jpeg'],
     Component: GreenwichWithPhoto,
   },
   {
